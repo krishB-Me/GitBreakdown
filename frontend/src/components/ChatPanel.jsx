@@ -1,29 +1,30 @@
-import { useState, useEffect, useRef } from 'react'
 import { Send } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
 
 export default function ChatPanel({ messages, onSendMessage }) {
-  const [inputValue, setInputValue] = useState('')
-  const messagesEndRef = useRef(null)
+
+  const [inputValue, setInputValue] = useState('');
+  const messageScrollRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    messageScrollRef?.current?.scrollIntoView({ behavior: 'smooth' });
   }
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   const handleSendMessage = () => {
-    if (inputValue.trim() && !inputValue.nativeEvent?.isComposing) {
-      onSendMessage(inputValue)
-      setInputValue('')
+    if (inputValue.trim()) { // Checking if the input is valid & not empty 
+      onSendMessage(inputValue);
+      setInputValue('');
     }
   }
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+    if (e.key == "Enter" && !e.nativeEvent?.isComposing) {
       e.preventDefault()
-      handleSendMessage()
+      handleSendMessage();
     }
   }
 
@@ -37,22 +38,22 @@ export default function ChatPanel({ messages, onSendMessage }) {
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-xs px-4 py-3 rounded-lg ${
-                message.type === 'user'
-                  ? 'bg-white vintage-border border text-vintage-charcoal'
-                  : 'bg-vintage-yellow text-vintage-charcoal'
-              }`}
-            >
-              <p className="text-sm leading-relaxed">{message.text}</p>
+          <div className={message.type === "user" ? "flex justify-start" : "flex justify-end"} key={message.id}>
+            <div className={
+              message.type === "user" 
+                ? "max-w-xs px-4 py-3 rounded-lg bg-vintage-yellow text-vintage-charcoal" 
+                :"max-w-xs px-4 py-3 rounded-lg bg-vintage-parchment text-vintage-charcoal"
+            }>
+              <p className="text-sm leading-relaxed">
+                {message.text}
+              </p>
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
+
+        <div ref={messageScrollRef}>
+
+        </div>
       </div>
 
       {/* Input Area */}
@@ -60,14 +61,17 @@ export default function ChatPanel({ messages, onSendMessage }) {
         <div className="flex gap-2">
           <input
             type="text"
-            value={inputValue}
+            
             onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
+            value={inputValue}
             placeholder="Ask a question about your code..."
-            className="flex-1 px-3 py-2 bg-white vintage-border rounded text-sm text-vintage-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-vintage-yellow"
+            className="flex-1 px-3 py-2 bg-white vintage-border rounded text-sm text-vintage-charcoal focus:outline-none focus:ring-2 focus:ring-vintage-yellow"
           />
           <button
-            onClick={handleSendMessage}
+            onClick={() => {
+              handleSendMessage()
+            }}
             className="px-4 py-2 bg-vintage-yellow text-vintage-charcoal font-bold rounded hover:bg-vintage-amber transition-colors flex items-center gap-2"
           >
             <Send className="w-4 h-4" />
