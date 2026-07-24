@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
+import { useState } from 'react'
 
 const sampleCode = `import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
@@ -18,29 +18,34 @@ export default function App() {
 }`
 
 export default function CodeEditorPanel({ selectedFile }) {
-  const [activeTab, setActiveTab] = useState('code')
+
+  const [activeTab, setActiveTab] = useState('code');
 
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Tabs */}
       <div className="flex items-center gap-2 px-4 py-3 vintage-border border-b-2 border-vintage-charcoal bg-vintage-parchment">
         <button
-          onClick={() => setActiveTab('code')}
-          className={`px-4 py-2 rounded font-mono text-sm transition-colors ${
-            activeTab === 'code'
+          onClick={() => {
+            setActiveTab('code')
+          }}
+          className={`px-4 py-2 rounded font-mono text-sm transition-colors
+            ${activeTab === "code"
               ? 'bg-vintage-yellow text-vintage-charcoal font-bold'
               : 'bg-white vintage-border border text-vintage-charcoal hover:bg-vintage-parchment'
-          }`}
+            }`}
         >
           Code
         </button>
         <button
-          onClick={() => setActiveTab('summary')}
-          className={`px-4 py-2 rounded font-mono text-sm transition-colors ${
-            activeTab === 'summary'
+          onClick={() => {
+            setActiveTab('summary')
+          }}
+          className={`px-4 py-2 rounded font-mono text-sm transition-colors
+            ${activeTab === 'summary'
               ? 'bg-vintage-yellow text-vintage-charcoal font-bold'
               : 'bg-white vintage-border border text-vintage-charcoal hover:bg-vintage-parchment'
-          }`}
+            }`}
         >
           AI Summary
         </button>
@@ -48,7 +53,7 @@ export default function CodeEditorPanel({ selectedFile }) {
 
       {/* Content Area */}
       <div className="flex-1 overflow-auto flex flex-col">
-        {activeTab === 'code' && (
+        {activeTab === "code" && (
           <>
             {/* AI Purpose Card */}
             <div className="p-4 mx-4 mt-4 bg-vintage-amber bg-opacity-20 vintage-border border rounded-lg">
@@ -68,13 +73,15 @@ export default function CodeEditorPanel({ selectedFile }) {
             {/* Code Block */}
             <div className="flex-1 p-4 overflow-auto">
               <pre className="bg-vintage-darkcode text-vintage-yellow p-4 rounded-lg font-mono text-sm leading-relaxed overflow-auto whitespace-pre-wrap break-words">
-                <code>{sampleCode}</code>
+                <code>{selectedFile ? selectedFile.content : sampleCode}</code>
               </pre>
             </div>
           </>
         )}
 
-        {activeTab === 'summary' && (
+
+        {/* TODO: Conditionally render summary panel when activeTab === 'summary' (e.g. wrapper div should have `hidden` class or not render) */}
+        {activeTab === "summary" && (
           <div className="flex-1 p-4 overflow-auto">
             <div className="prose prose-invert max-w-none">
               <div className="bg-vintage-parchment p-6 rounded-lg">
