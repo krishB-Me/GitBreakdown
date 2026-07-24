@@ -2,23 +2,24 @@ import { useState } from 'react'
 import { GitBranch, Code2, MessageSquare } from 'lucide-react'
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('home')
-  const [repoUrl, setRepoUrl] = useState('')
+
+  const [currentPage, setCurrentPage] = useState('home');
+  const [repoURL, setRepoURL] = useState('');
 
   const handleAnalyze = () => {
-    if (repoUrl.trim()) {
-      setCurrentPage('dashboard')
+    if (repoURL.trim()) {
+      setCurrentPage('dashboard');
     }
   }
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.nativeEvent?.isComposing) {
-      handleAnalyze()
+    if (e.key === "Enter" && !e.nativeEvent?.isComposing) {
+      handleAnalyze();
     }
   }
 
-  if (currentPage === 'dashboard') {
-    return <DashboardPage onBack={() => setCurrentPage('home')} repoUrl={repoUrl} />
+  if (currentPage === 'dashboard') { // Rendering the dashboard page is we are there
+    return <DashboardPage onBack={() => setCurrentPage('home')} repoUrl={repoURL} />
   }
 
   return (
@@ -32,7 +33,9 @@ export default function App() {
             <a href="#" className="text-vintage-charcoal hover:text-vintage-amber font-medium">Docs</a>
             <a href="#" className="text-vintage-charcoal hover:text-vintage-amber font-medium">About</a>
             <button
-              onClick={handleAnalyze}
+              onClick={() => {
+                handleAnalyze()
+              }}
               className="px-6 py-2 bg-vintage-yellow text-vintage-charcoal font-bold rounded-full hover:bg-vintage-amber"
             >
               Launch App
@@ -59,13 +62,15 @@ export default function App() {
             <input
               type="text"
               placeholder="https://github.com/username/repository"
-              value={repoUrl}
-              onChange={(e) => setRepoUrl(e.target.value)}
-              onKeyPress={handleKeyPress}
+              value={repoURL}
+              onChange={(e) => { setRepoURL(e.target.value); }}
+              onKeyDown={handleKeyPress}
               className="flex-1 px-5 py-4 bg-white border-2 border-vintage-charcoal rounded text-vintage-charcoal focus:outline-none focus:ring-2 focus:ring-vintage-yellow"
             />
             <button
-              onClick={handleAnalyze}
+              onClick={() => {
+                handleAnalyze()
+              }}
               className="px-8 py-4 bg-vintage-yellow text-vintage-charcoal font-bold rounded hover:bg-vintage-amber whitespace-nowrap"
             >
               Analyze Repository
@@ -111,12 +116,13 @@ export default function App() {
 }
 
 function DashboardPage({ onBack, repoUrl }) {
-  const [activePanel, setActivePanel] = useState('code')
+
+  const [activePanel, setActivePanel] = useState('code');
   const [messages, setMessages] = useState([
     { id: 1, type: 'ai', text: "Hello! I'm your code companion. Ask me anything about your repository!" }
   ])
-  const [inputValue, setInputValue] = useState('')
-  const [selectedFile, setSelectedFile] = useState(null)
+  const [inputValue, setInputValue] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const sampleCode = `import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
@@ -134,16 +140,16 @@ export default function App() {
   )
 }`
 
+  const response = "I'm analyzing your response."
   const handleSendMessage = () => {
     if (inputValue.trim()) {
-      const newMessages = [
+      setMessages([
         ...messages,
         { id: messages.length + 1, type: 'user', text: inputValue },
-        { id: messages.length + 2, type: 'ai', text: "That's a great question! I'm analyzing your code..." }
-      ]
-      setMessages(newMessages)
-      setInputValue('')
+        { id: messages.length + 2, type: 'ai', text: response }
+      ])
     }
+    setInputValue('');
   }
 
   return (
@@ -151,11 +157,18 @@ export default function App() {
       {/* Header */}
       <header className="bg-vintage-cream border-b-2 border-vintage-charcoal">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <button onClick={onBack} className="text-3xl font-serif font-bold text-vintage-charcoal">
+          <button
+            onClick={() => {
+              onBack();
+            }}
+            className="text-3xl font-serif font-bold text-vintage-charcoal"
+          >
             GitBreakdown
           </button>
           <button
-            onClick={onBack}
+            onClick={() => {
+              onBack();
+            }}
             className="px-4 py-2 bg-vintage-yellow text-vintage-charcoal font-bold rounded hover:bg-vintage-amber"
           >
             Back
@@ -171,10 +184,13 @@ export default function App() {
             <h2 className="font-serif text-lg font-bold text-vintage-charcoal">3D File Map</h2>
           </div>
           <div className="p-3 space-y-2">
+            {/* TODO: Replace with dynamic file list and selected state checks */}
             {['src', 'components', 'pages', 'App.jsx', 'index.css'].map((item, i) => (
               <div
                 key={i}
-                onClick={() => setSelectedFile(item)}
+                onClick={() => {
+                  setSelectedFile(item)
+                }}
                 className={`py-2 px-3 rounded cursor-pointer font-mono text-sm ${selectedFile === item
                     ? 'bg-vintage-yellow text-vintage-charcoal font-bold'
                     : 'hover:bg-vintage-cream text-vintage-charcoal'
@@ -193,7 +209,9 @@ export default function App() {
         <div className="flex-1 bg-white border-2 border-vintage-charcoal rounded overflow-hidden flex flex-col">
           <div className="flex gap-2 p-3 border-b-2 border-vintage-charcoal bg-vintage-parchment">
             <button
-              onClick={() => setActivePanel('code')}
+              onClick={() => {
+                setActivePanel('code')
+              }}
               className={`px-4 py-2 rounded font-mono text-sm ${activePanel === 'code'
                   ? 'bg-vintage-yellow text-vintage-charcoal font-bold'
                   : 'bg-white border border-vintage-charcoal text-vintage-charcoal'
@@ -202,7 +220,9 @@ export default function App() {
               Code
             </button>
             <button
-              onClick={() => setActivePanel('summary')}
+              onClick={() => {
+                setActivePanel('summary')
+              }}
               className={`px-4 py-2 rounded font-mono text-sm ${activePanel === 'summary'
                   ? 'bg-vintage-yellow text-vintage-charcoal font-bold'
                   : 'bg-white border border-vintage-charcoal text-vintage-charcoal'
@@ -213,12 +233,13 @@ export default function App() {
           </div>
 
           <div className="flex-1 overflow-auto">
-            {activePanel === 'code' && (
+
+            {activePanel === "code" && (
               <div className="p-4">
                 <div className="p-4 mb-4 bg-vintage-amber bg-opacity-20 border border-vintage-amber rounded">
                   <p className="font-bold text-vintage-charcoal">File Purpose:</p>
                   <p className="text-sm text-vintage-charcoal mt-1">
-                    {selectedFile ? `Details about ${selectedFile}` : 'Select a file to see details'}
+                    {selectedFile ? `Details about ${selectedFile}` : `Select a file to see details`}
                   </p>
                 </div>
                 <pre className="bg-vintage-darkcode text-vintage-yellow p-4 rounded font-mono text-sm overflow-auto">
@@ -226,17 +247,20 @@ export default function App() {
                 </pre>
               </div>
             )}
-            {activePanel === 'summary' && (
+
+            {activePanel === "summary" && (
               <div className="p-4">
                 <div className="bg-vintage-parchment p-4 rounded">
                   <h3 className="font-serif text-lg font-bold text-vintage-charcoal mb-3">AI Code Summary</h3>
                   <p className="text-vintage-charcoal text-sm mb-2">
+                    {/* TODO: Display summary text */}
                     This is the main application component that sets up routing.
                   </p>
                   <p className="text-vintage-charcoal text-sm"><strong>Dependencies:</strong> React Router DOM</p>
                 </div>
               </div>
             )}
+
           </div>
         </div>
 
@@ -250,6 +274,7 @@ export default function App() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
+            {/* TODO: Map over messages state and render chat bubbles dynamically */}
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
@@ -268,18 +293,22 @@ export default function App() {
             <div className="flex gap-2">
               <input
                 type="text"
+                placeholder="Ask..."
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={(e) => {
+                onChange={(e) => {
+                  setInputValue(e.target.value)
+                }}
+                onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.nativeEvent?.isComposing) {
                     handleSendMessage()
                   }
                 }}
-                placeholder="Ask..."
                 className="flex-1 px-3 py-2 bg-white border border-vintage-charcoal rounded text-sm text-vintage-charcoal focus:outline-none focus:ring-2 focus:ring-vintage-yellow"
               />
               <button
-                onClick={handleSendMessage}
+                onClick={() => {
+                  handleSendMessage()
+                }}
                 className="px-3 py-2 bg-vintage-yellow text-vintage-charcoal font-bold rounded hover:bg-vintage-amber text-sm"
               >
                 Send
