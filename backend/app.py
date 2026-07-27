@@ -6,7 +6,7 @@ import psycopg2
 import requests
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv() 
 
 app = Flask(__name__)
 CORS(app)  # Enables Cross-Origin Resource Sharing for frontend communication
