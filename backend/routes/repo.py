@@ -36,12 +36,12 @@ def analyze_repo():
         response = {"summary": summary, "tree":tree} 
         
     if not response:
+        save_repo(owner, repo_name, branch)
         summary = summarize(description, tree_paths, branch, owner, repo_name)
         response = {"summary": summary, "tree": tree} 
         
-        # saving the repo in db only if we have a valid summary
+        # update columns in db with the generated summary
         if summary and summary != "Unable to generate summary.":
-            save_repo(owner, repo_name, branch)
             update_columns("repositories", "overall_summary", summary, owner=owner, repo=repo_name)
             update_columns("repositories", "description", description, owner=owner, repo=repo_name)
     
