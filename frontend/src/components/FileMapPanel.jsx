@@ -73,14 +73,14 @@ function TreeNode({ node, level = 0, onSelectFile, selectedFile, filesOpened, se
             setExpanded(!expanded)
           }
         }}
-        className={`flex items-center gap-2 py-2 px-3 cursor-pointer rounded transition-colors text-vintage-charcoal
+        className={`flex items-center gap-2 py-2 px-3 cursor-pointer rounded transition-colors
           ${isSelected
-            ? 'bg-vintage-yellow text-vintage-charcoal font-semibold'
-            : 'hover:bg-vintage-parchment text-vintage-charcoal'
+            ? 'bg-dev-bg-hover text-dev-text-primary font-semibold'
+            : 'text-dev-text-secondary hover:bg-dev-bg-hover/50 hover:text-dev-text-primary'
           }`}
       >
         {!isFile && (
-          <div className="w-5 flex justify-center">
+          <div className="w-5 flex justify-center text-dev-text-dim">
             {expanded ? (
               <ChevronDown className="w-4 h-4" />
             ) : (
@@ -89,9 +89,9 @@ function TreeNode({ node, level = 0, onSelectFile, selectedFile, filesOpened, se
           </div>
         )}
         {isFile ? (
-          <FileText className="w-4 h-4 text-vintage-amber" />
+          <FileText className={`w-4 h-4 ${isSelected ? 'text-dev-orange' : 'text-dev-text-secondary'}`} />
         ) : (
-          <Folder className="w-4 h-4 text-vintage-charcoal" />
+          <Folder className="w-4 h-4 text-dev-text-secondary" />
         )}
         <span className="text-sm font-mono">{node.name}</span>
       </div>
@@ -117,10 +117,10 @@ function TreeNode({ node, level = 0, onSelectFile, selectedFile, filesOpened, se
 
 export default function FileMapPanel({ selectedFile, onSelectFile, filesOpened, setFilesOpened, treeStructure }) {
   return (
-    <div className="h-full flex flex-col bg-vintage-parchment vintage-border border-r-2 border-vintage-charcoal">
+    <div className="h-full flex flex-col bg-dev-bg-base border-r border-dev-border">
       {/* Header */}
-      <div className="px-4 py-[5.5px] vintage-border border-b-2 border-vintage-charcoal bg-vintage-yellow">
-        <h2 className="font-serif text-lg font-bold text-vintage-charcoal">3D File Map</h2>
+      <div className="px-4 border-b border-dev-border bg-dev-bg-surface flex items-center h-10 shrink-0">
+        <h2 className="font-mono text-xs font-bold text-dev-text-secondary uppercase tracking-wider">3D File Map</h2>
       </div>
 
       {/* File Tree */}
