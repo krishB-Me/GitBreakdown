@@ -102,7 +102,7 @@ export default function ChatPanel({
 
       {/* Pinned AI Context Card (Slide-down, fade, and height transitions) */}
       <div
-        className={`flex-none overflow-hidden transition-all duration-300 ease-in-out bg-dev-bg-surface border-dev-border
+        className={`flex-none overflow-hidden transition-all duration-300 ease-in-out dev-glass-card
           ${activeCard 
             ? 'max-h-[450px] opacity-100 border-b' 
             : 'max-h-0 opacity-0 pointer-events-none border-b-0'
