@@ -28,14 +28,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="h-screen bg-vintage-cream flex flex-col overflow-hidden">
+    <div className="h-screen bg-dev-bg-darkest flex flex-col overflow-hidden">
       <Header />
 
       {/* Main Dashboard Content */}
       <div className="flex-1 overflow-hidden">
         <Group direction="horizontal" className="h-full">
           {/* Panel 1: 3D File Map */}
-          <Panel defaultSize={25} minSize={15} className="bg-vintage-cream">
+          <Panel defaultSize={25} minSize={15} className="bg-dev-bg-base">
             <FileMapPanel
               selectedFile={selectedFile}
               onSelectFile={(file) => {
@@ -49,12 +49,12 @@ export default function DashboardPage() {
           </Panel>
 
           {/* Resizer 1 */}
-          <Separator className="w-1 bg-vintage-charcoal hover:bg-vintage-yellow transition-colors cursor-col-resize flex items-center justify-center group">
-            <div className="w-0.5 h-8 bg-vintage-charcoal group-hover:bg-vintage-yellow transition-colors" />
+          <Separator className="w-1 bg-dev-border hover:bg-dev-orange transition-colors cursor-col-resize flex items-center justify-center group">
+            <div className="w-0.5 h-8 bg-dev-border group-hover:bg-dev-orange transition-colors" />
           </Separator>
 
           {/* Panel 2: Code Editor */}
-          <Panel defaultSize={50} minSize={30} className="bg-white">
+          <Panel defaultSize={50} minSize={30} className="bg-dev-bg-base">
             <CodeEditorPanel
               selectedFile={selectedFile}
               setSelectedFile={setSelectedFile}
@@ -68,12 +68,12 @@ export default function DashboardPage() {
           </Panel>
 
           {/* Resizer 2 */}
-          <Separator className="w-1 bg-vintage-charcoal hover:bg-vintage-yellow transition-colors cursor-col-resize flex items-center justify-center group">
-            <div className="w-0.5 h-8 bg-vintage-charcoal group-hover:bg-vintage-yellow transition-colors" />
+          <Separator className="w-1 bg-dev-border hover:bg-dev-orange transition-colors cursor-col-resize flex items-center justify-center group">
+            <div className="w-0.5 h-8 bg-dev-border group-hover:bg-dev-orange transition-colors" />
           </Separator>
 
           {/* Panel 3: Chat */}
-          <Panel defaultSize={25} minSize={15} className="bg-vintage-cream">
+          <Panel defaultSize={25} minSize={15} className="bg-dev-bg-base">
             <ChatPanel 
               messages={messages} 
               onSendMessage={handleSendMessage} 
