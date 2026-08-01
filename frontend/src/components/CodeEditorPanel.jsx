@@ -25,13 +25,13 @@ const fileContents = {
 
 export default function Header() {
   return (
-    <header className="bg-vintage-cream vintage-border border-b-2 border-vintage-charcoal sticky top-0 z-50">
+    <header className="bg-dev-bg-surface border-b border-dev-border sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="font-serif text-3xl font-bold text-vintage-charcoal">
+        <Link to="/" className="font-mono text-2xl font-bold text-dev-text-primary hover:text-dev-orange">
           GitBreakdown
         </Link>
         <nav className="flex items-center gap-8">
-          <Link to="/dashboard" className="px-6 py-2 bg-vintage-yellow text-vintage-charcoal font-bold rounded-full">
+          <Link to="/dashboard" className="px-6 py-2 bg-dev-orange text-white font-medium rounded-full hover:bg-dev-orange-hover">
             Launch App
           </Link>
         </nav>
@@ -54,16 +54,16 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-vintage-cream">
+    <div className="min-h-screen bg-dev-bg-darkest text-dev-text-primary">
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-16 text-center">
-        <h1 className="font-serif text-5xl font-bold mb-6">Deconstruct your code.</h1>
+        <h1 className="font-mono text-4xl font-bold mb-6">Deconstruct your code.</h1>
         <input 
           value={repoUrl} 
           onChange={e => setRepoUrl(e.target.value)} 
-          className="px-5 py-4 border-2 border-vintage-charcoal rounded"
+          className="px-5 py-4 bg-dev-bg-base border border-dev-border rounded"
         />
-        <button onClick={handleAnalyze} className="px-8 py-4 bg-vintage-yellow font-bold rounded ml-3">
+        <button onClick={handleAnalyze} className="px-8 py-4 bg-dev-orange text-white font-bold rounded ml-3">
           Analyze
         </button>
       </div>
@@ -80,14 +80,14 @@ import ChatPanel from '../components/ChatPanel'
 export default function DashboardPage() {
   const [selectedFile, setSelectedFile] = useState(null)
   return (
-    <div className="min-h-screen bg-vintage-cream flex flex-col">
+    <div className="min-h-screen bg-dev-bg-darkest flex flex-col">
       <Header />
       <div className="flex-1 flex overflow-hidden">
         <Group direction="horizontal">
           <Panel defaultSize={25}><FileMapPanel onSelectFile={setSelectedFile} /></Panel>
-          <Separator className="w-1 bg-vintage-charcoal" />
+          <Separator className="w-1 bg-dev-border" />
           <Panel defaultSize={50}><CodeEditorPanel selectedFile={selectedFile} /></Panel>
-          <Separator className="w-1 bg-vintage-charcoal" />
+          <Separator className="w-1 bg-dev-border" />
           <Panel defaultSize={25}><ChatPanel /></Panel>
         </Group>
       </div>
@@ -138,9 +138,9 @@ export default function CodeEditorPanel({
     : sampleCode;
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-dev-bg-base">
       {/* Tabs */}
-      <div className="h-10 flex-none overflow-hidden border-b-2 border-vintage-charcoal bg-vintage-parchment">
+      <div className="h-10 flex-none overflow-hidden border-b border-dev-border bg-dev-bg-surface">
         <div
           onWheel={handleWheel}
           className="flex items-center flex-nowrap overflow-x-auto h-full no-scrollbar select-none"
@@ -149,10 +149,10 @@ export default function CodeEditorPanel({
             onClick={() => {
               setActiveTab('summary')
             }}
-            className={`px-4 h-full shrink-0 flex items-center whitespace-nowrap font-mono text-sm transition-colors border-r-2 border-vintage-charcoal cursor-pointer focus:outline-none
+            className={`px-4 h-full shrink-0 flex items-center whitespace-nowrap font-mono text-sm transition-colors border-r border-dev-border cursor-pointer focus:outline-none
               ${activeTab === 'summary'
-                ? 'bg-vintage-yellow text-vintage-charcoal font-bold'
-                : 'bg-white text-vintage-charcoal hover:bg-vintage-parchment'
+                ? 'bg-dev-bg-base text-dev-text-primary font-bold border-t-2 border-t-dev-orange'
+                : 'bg-dev-bg-surface text-dev-text-secondary hover:bg-dev-bg-hover hover:text-dev-text-primary'
               }`}
           >
             AI Summary
@@ -169,10 +169,10 @@ export default function CodeEditorPanel({
                   setActiveTab('code')
                   setSelectedFile(file)
                 }}
-                className={`group flex items-center h-full shrink-0 flex-nowrap border-r-2 border-vintage-charcoal cursor-pointer whitespace-nowrap transition-colors
+                className={`group flex items-center h-full shrink-0 flex-nowrap border-r border-dev-border cursor-pointer whitespace-nowrap transition-colors
                    ${isFileSelected && activeTab === 'code'
-                    ? 'bg-vintage-yellow text-vintage-charcoal font-bold'
-                    : 'bg-white text-vintage-charcoal hover:bg-vintage-parchment'
+                    ? 'bg-dev-bg-base text-dev-text-primary font-bold border-t-2 border-t-dev-orange'
+                    : 'bg-dev-bg-surface text-dev-text-secondary hover:bg-dev-bg-hover hover:text-dev-text-primary'
                   }`}
               >
                 <span className="pl-3 pr-1 font-mono text-sm select-none">
@@ -193,7 +193,7 @@ export default function CodeEditorPanel({
                       setActiveTab('code');
                     }
                   }}
-                  className="pr-2 pl-1 h-full flex items-center justify-center text-vintage-charcoal hover:text-vintage-amber cursor-pointer transition-colors focus:outline-none"
+                  className="pr-2 pl-1 h-full flex items-center justify-center text-dev-text-secondary hover:text-dev-orange cursor-pointer transition-colors focus:outline-none"
                 >
                   <X className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                 </button>
@@ -208,12 +208,12 @@ export default function CodeEditorPanel({
         {activeTab === "code" && (
           <>
             {/* AI Purpose Card */}
-            <div className="p-4 mx-4 mt-4 bg-vintage-amber bg-opacity-20 vintage-border border rounded-lg">
+            <div className="p-4 mx-4 mt-4 bg-dev-orange/10 border border-dev-orange/30 rounded-lg">
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-vintage-amber flex-shrink-0 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-dev-orange flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-serif font-semibold text-vintage-charcoal">File Purpose:</p>
-                  <p className="text-sm text-vintage-charcoal opacity-85 mt-1">
+                  <p className="font-mono text-sm font-semibold text-dev-text-primary">File Purpose:</p>
+                  <p className="text-sm text-dev-text-secondary font-mono mt-1">
                     {selectedFile
                       ? `This file contains ${selectedFile.name} with important logic for the application.`
                       : 'Select a file from the 3D File Map to see its purpose and details.'}
@@ -225,7 +225,7 @@ export default function CodeEditorPanel({
             {/* Code Block */}
             <div className="flex-1 p-4 overflow-auto no-scrollbar"
               onWheel={handleWheel}>
-              <pre className="bg-vintage-darkcode text-vintage-yellow p-4 rounded-lg font-mono text-sm leading-relaxed overflow-auto whitespace-pre-wrap break-words">
+              <pre className="bg-dev-bg-surface text-dev-text-primary p-4 rounded-lg border border-dev-border font-mono text-sm leading-relaxed overflow-auto whitespace-pre-wrap break-words">
                 <code>{activeContent}</code>
               </pre>
             </div>
@@ -233,13 +233,13 @@ export default function CodeEditorPanel({
         )}
 
         {activeTab === "summary" && (
-          <div className="flex-1 p-4 overflow-auto">
+          <div className="flex-1 p-4 overflow-auto dev-glass-card">
             <div className="prose prose-invert max-w-none">
-              <div className="bg-vintage-parchment p-6 rounded-lg">
-                <h3 className="font-serif text-lg font-bold text-vintage-charcoal mb-3">
+              <div className="p-6 rounded-lg">
+                <h3 className="text-dev-text-primary text-lg font-mono font-bold mb-3">
                   AI Code Summary
                 </h3>
-                <div className="text-vintage-charcoal space-y-3 text-sm">
+                <div className="text-dev-text-primary font-mono space-y-3 text-sm">
                   {summary ? (
                     <ReactMarkdown>{summary}</ReactMarkdown>
                   ) : (
