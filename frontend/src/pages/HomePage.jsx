@@ -1,21 +1,33 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { GitBranch, Code2, MessageSquare } from 'lucide-react'
+import api from "../../api.js"
 import Header from '../components/Header'
 
 export default function HomePage() {
-  const [repoUrl, setRepoUrl] = useState('')
-  const navigate = useNavigate()
+  const [repoUrl, setRepoUrl] = useState('');
+  const navigate = useNavigate();
 
-  const handleAnalyze = () => {
-    if (repoUrl.trim()) {
-      navigate('/dashboard')
+  const handleAnalyze = async () => {
+    if (!repoUrl.trim()) return;
+
+    // sending the request to the backend
+    try {
+      console.log("Analyzing");
+      const response = await api.post("/analyze",
+        { url: repoUrl }
+      )
+      const treeStructure = response.data.tree
+      const summary = response.data.summary
+      navigate('/dashboard', { state: { repoUrl, treeStructure, summary } });
+    } catch (error) {
+      console.error("There was an error processing repo: ", error)
     }
   }
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
-      handleAnalyze()
+    if (e.key === "Enter" && !e.nativeEvent?.isComposing) {
+      handleAnalyze();
     }
   }
 
@@ -44,7 +56,7 @@ export default function HomePage() {
               placeholder="https://github.com/username/repository"
               value={repoUrl}
               onChange={(e) => setRepoUrl(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               className="flex-1 px-5 py-4 bg-white vintage-border rounded-lg text-vintage-charcoal focus:outline-none focus:ring-2 focus:ring-vintage-yellow focus:ring-offset-2 focus:ring-offset-vintage-cream"
             />
             <button
