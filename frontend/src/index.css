@@ -1,12 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-vintage-cream: #F4E4BC;
-  --color-vintage-parchment: #EAD6A4;
-  --color-vintage-yellow: #FFCB05;
-  --color-vintage-amber: #FF9E1B;
-  --color-vintage-charcoal: #1C1917;
-  --color-vintage-darkcode: #25221E;
+  /* --- 1. FONTS (Inter for UI, JetBrains Mono for Code) --- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* --- 2. DARK IDE BACKGROUNDS --- */
+  --color-dev-bg-darkest: #090A0C; /* Root app background */
+  --color-dev-bg-base: #0E1013;    /* Main editor & sidebar */
+  --color-dev-bg-surface: #15181C; /* Glass cards & panels */
+  --color-dev-bg-hover: #1F242A;   /* Active file row / hover */
+
+  /* --- 3. BORDERS & ACCENTS --- */
+  --color-dev-border: #22272E;
+  --color-dev-border-active: #383F47;
+
+  /* --- 4. TYPOGRAPHY --- */
+  --color-dev-text-primary: #EEEEEE;
+  --color-dev-text-secondary: #9DA7B3;
+  --color-dev-text-dim: #57606A;
+
+  /* --- 5. ACCENT COLORS --- */
+  --color-dev-orange: #FF6B00;      /* Primary Buttons / CTAs */
+  --color-dev-orange-hover: #FF7D1A;
+  --color-dev-emerald: #10B981;     /* Git / Connected Status */
+  --color-dev-cyan: #06B6D4;        /* AI Insights & Badges */
 }
 
 * {
@@ -16,9 +35,21 @@
 }
 
 body {
-  background-color: #F4E4BC !important;
-  color: #1C1917 !important;
-  color-scheme: only light;
+  background-color: var(--color-dev-bg-darkest) !important;
+  color: var(--color-dev-text-primary) !important;
+  color-scheme: only dark;
+  font-family: var(--font-sans);
+}
+
+pre,
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+.dev-glass-card {
+  background: rgba(21, 24, 28, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-dev-border);
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
