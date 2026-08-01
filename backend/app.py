@@ -2,18 +2,19 @@ import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
-import psycopg2
-import requests
+from routes.repo import repo_bp
 
 # Load environment variables from .env file
 load_dotenv() 
 
-app = Flask(__name__)
-CORS(app)  # Enables Cross-Origin Resource Sharing for frontend communication
+DATABASE_URL = os.getenv("SUPABASE_URL")
+FLASK_ENV = os.getenv("FLASK_ENV", "development") 
 
-# Retrieve environment variables
-DATABASE_URL = os.getenv("SUPABASE_API_URL")
-FLASK_ENV = os.getenv("FLASK_ENV", "development")
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Enables Cross-Origin Resource Sharing for frontend communication
+
+# These are the API blueprints for the app
+app.register_blueprint(repo_bp, url_prefix='/api')
 
 @app.route("/")
 def index():
@@ -25,11 +26,6 @@ def index():
         "message": "Flask server is running!",
         "database_configured": DATABASE_URL is not None
     })
-
-# TODO: Add your repository analysis routes here
-# @app.route("/api/analyze", methods=["POST"])
-# def analyze():
-#     pass
 
 if __name__ == "__main__":
     # Run the development server on port 5000
