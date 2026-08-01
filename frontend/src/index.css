@@ -1,31 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
+/* --- TAILWIND V4 THEME CONFIG --- */
 @theme {
-  /* --- 1. FONTS (Inter for UI, JetBrains Mono for Code) --- */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  /* --- 2. DARK IDE BACKGROUNDS --- */
-  --color-dev-bg-darkest: #090A0C; /* Root app background */
-  --color-dev-bg-base: #0E1013;    /* Main editor & sidebar */
-  --color-dev-bg-surface: #15181C; /* Glass cards & panels */
-  --color-dev-bg-hover: #1F242A;   /* Active file row / hover */
+  --color-dev-bg-darkest: #090A0C;
+  --color-dev-bg-base: #0E1013;
+  --color-dev-bg-surface: #15181C;
+  --color-dev-bg-hover: #1F242A;
 
-  /* --- 3. BORDERS & ACCENTS --- */
   --color-dev-border: #22272E;
   --color-dev-border-active: #383F47;
 
-  /* --- 4. TYPOGRAPHY --- */
   --color-dev-text-primary: #EEEEEE;
   --color-dev-text-secondary: #9DA7B3;
   --color-dev-text-dim: #57606A;
 
-  /* --- 5. ACCENT COLORS --- */
-  --color-dev-orange: #FF6B00;      /* Primary Buttons / CTAs */
+  --color-dev-orange: #FF6B00;
   --color-dev-orange-hover: #FF7D1A;
-  --color-dev-emerald: #10B981;     /* Git / Connected Status */
-  --color-dev-cyan: #06B6D4;        /* AI Insights & Badges */
+  --color-dev-emerald: #10B981;
+  --color-dev-cyan: #06B6D4;
 }
 
 * {
@@ -37,11 +33,12 @@
 body {
   background-color: var(--color-dev-bg-darkest) !important;
   color: var(--color-dev-text-primary) !important;
-  color-scheme: only dark;
+  color-scheme: dark;
   font-family: var(--font-sans);
 }
 
 pre,
+code,
 .font-mono {
   font-family: var(--font-mono) !important;
 }
@@ -56,8 +53,9 @@ pre,
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
