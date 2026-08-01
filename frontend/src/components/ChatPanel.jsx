@@ -94,26 +94,26 @@ export default function ChatPanel({
   }
 
   return (
-    <div className="h-full flex flex-col bg-vintage-parchment vintage-border border-l-2 border-vintage-charcoal">
+    <div className="h-full flex flex-col bg-dev-bg-base border-l border-dev-border">
       {/* Header */}
-      <div className="px-4 py-[5.5px] vintage-border border-b-2 border-vintage-charcoal bg-vintage-yellow">
-        <h2 className="font-serif text-lg font-bold text-vintage-charcoal">Companion Chat</h2>
+      <div className="px-4 border-b border-dev-border bg-dev-bg-surface flex items-center h-10 shrink-0">
+        <h2 className="font-mono text-xs font-bold text-dev-text-secondary uppercase tracking-wider">Companion Chat</h2>
       </div>
 
       {/* Pinned AI Context Card (Slide-down, fade, and height transitions) */}
       <div
-        className={`flex-none overflow-hidden transition-all duration-300 ease-in-out bg-vintage-cream border-vintage-charcoal
+        className={`flex-none overflow-hidden transition-all duration-300 ease-in-out bg-dev-bg-surface border-dev-border
           ${activeCard 
-            ? 'max-h-[450px] opacity-100 border-b-2' 
+            ? 'max-h-[450px] opacity-100 border-b' 
             : 'max-h-0 opacity-0 pointer-events-none border-b-0'
           }`}
       >
         {activeCard && (
           <div className="flex flex-col">
             {/* Card Header Badge */}
-            <div className="flex items-center justify-between px-4 py-2 bg-vintage-yellow/20 border-b border-vintage-charcoal/20 select-none">
+            <div className="flex items-center justify-between px-4 py-2 bg-dev-orange/10 border-b border-dev-border/50 select-none">
               <div className="flex items-center gap-2 overflow-hidden mr-4">
-                <span className="text-xs font-serif font-bold text-vintage-charcoal truncate">
+                <span className="text-xs font-mono font-bold text-dev-orange truncate">
                   📄 ACTIVE CONTEXT: {activeCard.path}
                 </span>
               </div>
@@ -121,15 +121,15 @@ export default function ChatPanel({
               <div className="flex items-center gap-2 shrink-0">
                 {activeCard.loading ? (
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-vintage-amber animate-pulse" />
-                    <span className="text-xs font-mono font-bold text-vintage-charcoal/80">
-                      ● Analyzing...
+                    <span className="w-2 h-2 rounded-full bg-dev-orange animate-pulse" />
+                    <span className="text-xs font-mono font-semibold text-dev-text-secondary">
+                      Analyzing...
                     </span>
                   </div>
                 ) : (
                   <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="px-2 py-0.5 text-xs font-mono border border-vintage-charcoal rounded bg-white hover:bg-vintage-amber hover:text-white transition-colors cursor-pointer font-bold focus:outline-none"
+                    className="px-2 py-0.5 text-xs font-mono border border-dev-border rounded bg-dev-bg-hover text-dev-text-primary hover:bg-dev-orange hover:text-white transition-colors cursor-pointer font-bold focus:outline-none"
                   >
                     {isCollapsed ? '▼ Expand' : '▲ Hide'}
                   </button>
@@ -142,8 +142,8 @@ export default function ChatPanel({
               className={`transition-all duration-300 ease-in-out overflow-hidden
                 ${isCollapsed || activeCard.loading ? 'max-h-0' : 'max-h-80'}`}
             >
-              <div className="p-4 text-sm text-vintage-charcoal font-sans bg-white/60 border-t border-vintage-charcoal/10 overflow-y-auto max-h-80 leading-relaxed markdown-body no-scrollbar">
-                <div className="prose prose-sm max-w-none prose-stone">
+              <div className="p-4 text-sm text-dev-text-primary font-mono bg-dev-bg-surface/60 border-t border-dev-border/30 overflow-y-auto max-h-80 leading-relaxed markdown-body no-scrollbar">
+                <div className="prose prose-sm max-w-none prose-invert">
                   <ReactMarkdown>
                     {activeCard.summary || ''}
                   </ReactMarkdown>
@@ -161,10 +161,10 @@ export default function ChatPanel({
           <div className={message.type === "user" ? "flex justify-end" : "flex justify-start"} key={message.id}>
             <div className={
               message.type === "user"
-                ? "max-w-xs px-4 py-3 rounded-lg bg-white border border-vintage-charcoal text-vintage-charcoal"
-                : "max-w-xs px-4 py-3 rounded-lg bg-vintage-yellow text-vintage-charcoal"
+                ? "max-w-xs px-4 py-2.5 rounded-lg bg-dev-bg-surface border border-dev-border text-dev-text-primary"
+                : "max-w-xs px-4 py-2.5 rounded-lg bg-dev-orange/15 border border-dev-orange/30 text-dev-text-primary"
             }>
-              <p className="text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed font-sans">
                 {message.text}
               </p>
             </div>
@@ -177,7 +177,7 @@ export default function ChatPanel({
       </div>
 
       {/* Input Area */}
-      <div className="p-4 vintage-border border-t-2 border-vintage-charcoal bg-vintage-cream">
+      <div className="p-4 border-t border-dev-border bg-dev-bg-surface">
         <div className="flex gap-2">
           <input
             type="text"
@@ -186,13 +186,13 @@ export default function ChatPanel({
             onKeyDown={handleKeyPress}
             value={inputValue}
             placeholder="Ask a question about your code..."
-            className="flex-1 px-3 py-2 bg-white vintage-border rounded text-sm text-vintage-charcoal focus:outline-none focus:ring-2 focus:ring-vintage-yellow"
+            className="flex-1 px-3 py-2 bg-dev-bg-base border border-dev-border rounded text-sm text-dev-text-primary placeholder:text-dev-text-dim focus:outline-none focus:border-dev-orange focus:ring-1 focus:ring-dev-orange"
           />
           <button
             onClick={() => {
               handleSendMessage()
             }}
-            className="px-4 py-2 bg-vintage-yellow text-vintage-charcoal font-bold rounded hover:bg-vintage-amber transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-dev-orange text-white font-bold rounded hover:bg-dev-orange-hover transition-colors flex items-center gap-2"
           >
             <Send className="w-4 h-4" />
           </button>
