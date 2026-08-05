@@ -6,7 +6,7 @@ import FileMapPanel from '../components/FileMapPanel'
 import CodeEditorPanel from '../components/CodeEditorPanel'
 import ChatPanel from '../components/ChatPanel'
 
-export default function DashboardPage() {
+export default function DashboardPage({ loading, setLoading }) {
   const location = useLocation()
   const repoUrl = location.state?.repoUrl || ''
   const treeStructure = location.state?.treeStructure || []
@@ -14,7 +14,7 @@ export default function DashboardPage() {
   const [filesOpened, setFilesOpened] = useState([]);
 
   const [selectedFile, setSelectedFile] = useState(null)
-  const [activeTab, setActiveTab] = useState('code')
+  const [activeTab, setActiveTab] = useState('summary')
   const [messages, setMessages] = useState([
     { id: 1, type: 'ai', text: "Hello! I'm your code companion. Ask me anything about your repository!" }
   ])
@@ -35,7 +35,7 @@ export default function DashboardPage() {
       <div className="flex-1 overflow-hidden">
         <Group direction="horizontal" className="h-full">
           {/* Panel 1: 3D File Map */}
-          <Panel defaultSize={25} minSize={15} className="bg-dev-bg-base">
+          <Panel defaultSize={15} minSize={5} className="bg-dev-bg-base no-scrollbar">
             <FileMapPanel
               selectedFile={selectedFile}
               onSelectFile={(file) => {
@@ -45,6 +45,8 @@ export default function DashboardPage() {
               filesOpened={filesOpened}
               setFilesOpened={setFilesOpened}
               treeStructure={treeStructure}
+              loading={loading}
+              setLoading={setLoading}
             />
           </Panel>
 
@@ -54,7 +56,7 @@ export default function DashboardPage() {
           </Separator>
 
           {/* Panel 2: Code Editor */}
-          <Panel defaultSize={50} minSize={30} className="bg-dev-bg-base">
+          <Panel defaultSize={50} minSize={30} className="bg-dev-bg-base no-scrollbar">
             <CodeEditorPanel
               selectedFile={selectedFile}
               setSelectedFile={setSelectedFile}
@@ -63,7 +65,9 @@ export default function DashboardPage() {
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               summary={summary}
-              repoURL={repoUrl} 
+              repoURL={repoUrl}
+              loading={loading}
+              setLoading={setLoading}
             />
           </Panel>
 
@@ -73,10 +77,10 @@ export default function DashboardPage() {
           </Separator>
 
           {/* Panel 3: Chat */}
-          <Panel defaultSize={25} minSize={15} className="bg-dev-bg-base">
-            <ChatPanel 
-              messages={messages} 
-              onSendMessage={handleSendMessage} 
+          <Panel defaultSize={25} minSize={15} className="bg-dev-bg-base no-scrollbar">
+            <ChatPanel
+              messages={messages}
+              onSendMessage={handleSendMessage}
               selectedFile={selectedFile}
               repoURL={repoUrl}
               setMessages={setMessages}
