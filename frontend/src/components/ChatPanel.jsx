@@ -4,6 +4,19 @@ import { handleWheel } from './CodeEditorPanel.jsx'
 import api from "../../api.js"
 import axios from 'axios'
 import ReactMarkdown from 'react-markdown'
+import useTypingEffect from '../hooks/TypingEffect'
+
+function SummarizingLoader() {
+  const { displayedText } = useTypingEffect("Summarizing", 80, 0);
+  return (
+    <span className='text-dev-emerald inline-flex items-center gap-0.5'>
+      {displayedText}
+      <span className="inline-block animate-dot1">.</span>
+      <span className="inline-block animate-dot2">.</span>
+      <span className="inline-block animate-dot3">.</span>
+    </span>
+  );
+}
 
 export default function ChatPanel({
   messages, onSendMessage, selectedFile, repoURL
@@ -52,7 +65,7 @@ export default function ChatPanel({
         });
 
         if (!response || !response.data) return;
-        
+
         // Update card state with backend response (State 3)
         setActiveCard({
           "path": selectedFile.path,
@@ -74,7 +87,7 @@ export default function ChatPanel({
       controller.abort();
     };
   }, [selectedFile, repoURL])
-  
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -102,51 +115,57 @@ export default function ChatPanel({
 
       {/* Pinned AI Context Card (Slide-down, fade, and height transitions) */}
       <div
-        className={`flex-none overflow-hidden transition-all duration-300 ease-in-out dev-glass-card
-          ${activeCard 
-            ? 'max-h-[450px] opacity-100 border-b' 
-            : 'max-h-0 opacity-0 pointer-events-none border-b-0'
+        className={`flex-none overflow-hidden transition-all duration-300 ease-in-out
+          ${activeCard
+            ? 'max-h-[450px] opacity-100'
+            : 'max-h-0 opacity-0 pointer-events-none'
           }`}
       >
         {activeCard && (
-          <div className="flex flex-col">
-            {/* Card Header Badge */}
-            <div className="flex items-center justify-between px-4 py-2 bg-dev-orange/10 border-b border-dev-border/50 select-none">
-              <div className="flex items-center gap-2 overflow-hidden mr-4">
-                <span className="text-xs font-mono font-bold text-dev-orange truncate">
-                  📄 ACTIVE CONTEXT: {activeCard.path}
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2 shrink-0">
-                {activeCard.loading ? (
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-dev-orange animate-pulse" />
-                    <span className="text-xs font-mono font-semibold text-dev-text-secondary">
-                      Analyzing...
+          <div className="p-3">
+            <div className="flex flex-col bg-dev-bg-surface/40 border border-dev-border backdrop-blur rounded-xl shadow-lg overflow-hidden">
+              {/* Card Header Badge */}
+              <div className="flex items-center justify-between px-4 py-2 bg-dev-orange/10 border-b border-dev-border/50 select-none">
+                <div className="flex items-center gap-2 overflow-hidden mr-4">
+                  {activeCard.loading ? (
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-2 h-2 rounded-full bg-dev-orange animate-pulse" />
+                      <span className="text-xs font-mono font-semibold text-dev-text-secondary">
+                        {activeCard.loading && (
+                          <SummarizingLoader key={activeCard.path} />
+                        )}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-xs font-mono font-bold text-dev-orange truncate">
+                      📄Summary generated for: {activeCard.path}
                     </span>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="px-2 py-0.5 text-xs font-mono border border-dev-border rounded bg-dev-bg-hover text-dev-text-primary hover:bg-dev-orange hover:text-white transition-colors cursor-pointer font-bold focus:outline-none"
-                  >
-                    {isCollapsed ? '▼ Expand' : '▲ Hide'}
-                  </button>
-                )}
-              </div>
-            </div>
+                  )}
+                </div>
 
-            {/* Card Body - expands down to fit content with a max-height guardrail */}
-            <div
-              className={`transition-all duration-300 ease-in-out overflow-hidden
-                ${isCollapsed || activeCard.loading ? 'max-h-0' : 'max-h-80'}`}
-            >
-              <div className="p-4 text-sm text-dev-text-primary font-mono bg-dev-bg-surface/60 border-t border-dev-border/30 overflow-y-auto max-h-80 leading-relaxed markdown-body no-scrollbar">
-                <div className="prose prose-sm max-w-none prose-invert">
-                  <ReactMarkdown>
-                    {activeCard.summary || ''}
-                  </ReactMarkdown>
+                <div className="flex items-center gap-2 shrink-0">
+                  {activeCard.loading && (
+                    <button
+                      onClick={() => setIsCollapsed(!isCollapsed)}
+                      className="px-2 py-0.5 text-xs font-mono border border-dev-border rounded bg-dev-bg-hover text-dev-text-primary hover:bg-dev-orange hover:text-white transition-colors cursor-pointer font-bold focus:outline-none"
+                    >
+                      {isCollapsed ? '▼ Expand' : '▲ Hide'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Card Body - expands down to fit content with a max-height guardrail */}
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden
+                  ${isCollapsed || activeCard.loading ? 'max-h-0' : 'max-h-80'}`}
+              >
+                <div className="p-4 text-sm text-dev-text-primary font-mono bg-dev-bg-surface/60 border-t border-dev-border/30 overflow-y-auto max-h-80 leading-relaxed markdown-body no-scrollbar">
+                  <div className="prose prose-sm max-w-none prose-invert">
+                    <ReactMarkdown>
+                      {activeCard.summary || ''}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </div>
             </div>
@@ -158,7 +177,7 @@ export default function ChatPanel({
       <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar"
         onWheel={handleWheel}>
         {messages.map((message) => (
-          <div className={message.type === "user" ? "flex justify-end" : "flex justify-start"} key={message.id}>
+          <div className={`${message.type === "user" ? "flex justify-end" : "flex justify-start"} animate-fadeIn`} key={message.id}>
             <div className={
               message.type === "user"
                 ? "max-w-xs px-4 py-2.5 rounded-lg bg-dev-bg-surface border border-dev-border text-dev-text-primary"
