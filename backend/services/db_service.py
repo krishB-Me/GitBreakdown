@@ -44,6 +44,12 @@ def get_file_data(repo_id, path):
     return response.data[0] if response.data else None
 
 def save_file(repo_id, path, content, summary=None):
+    # Sanitize string inputs: PostgreSQL does not support null characters (\u0000) in text fields.
+    if isinstance(content, str):
+        content = content.replace('\x00', '')
+    if isinstance(summary, str):
+        summary = summary.replace('\x00', '')
+
     payload = {
         "repo_id": repo_id,
         "path": path,
@@ -58,6 +64,9 @@ def save_file(repo_id, path, content, summary=None):
     return response.data[0]
     
 def update_columns(table, column, value, repo_id=None, path=None, owner=None, repo=None):
+    # PostgreSQL does not support null characters (\u0000) in text fields.
+    if isinstance(value, str):
+        value = value.replace('\x00', '')
 
     if table == "repositories":
         if not owner or not repo:
