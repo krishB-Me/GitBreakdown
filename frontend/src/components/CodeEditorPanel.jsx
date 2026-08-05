@@ -2,99 +2,11 @@ import { AlertCircle, X } from 'lucide-react'
 import ReactMarkdown from "react-markdown"
 import { useState, useEffect } from 'react'
 import api from '../../api'
-
-const sampleCode = `import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import DashboardPage from './pages/DashboardPage'
-
-export default function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-      </Routes>
-    </Router>
-  )
-}`
-
-const fileContents = {
-  'App.jsx': sampleCode,
-  'Header.jsx': `import { Link } from 'react-router-dom'
-
-export default function Header() {
-  return (
-    <header className="bg-dev-bg-surface border-b border-dev-border sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="font-mono text-2xl font-bold text-dev-text-primary hover:text-dev-orange">
-          GitBreakdown
-        </Link>
-        <nav className="flex items-center gap-8">
-          <Link to="/dashboard" className="px-6 py-2 bg-dev-orange text-white font-medium rounded-full hover:bg-dev-orange-hover">
-            Launch App
-          </Link>
-        </nav>
-      </div>
-    </header>
-  )
-}`,
-  'HomePage.jsx': `import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Header from '../components/Header'
-
-export default function HomePage() {
-  const [repoUrl, setRepoUrl] = useState('')
-  const navigate = useNavigate()
-
-  const handleAnalyze = () => {
-    if (repoUrl.trim()) {
-      navigate('/dashboard', { state: { repoUrl } })
-    }
-  }
-
-  return (
-    <div className="min-h-screen bg-dev-bg-darkest text-dev-text-primary">
-      <Header />
-      <div className="max-w-6xl mx-auto px-4 py-16 text-center">
-        <h1 className="font-mono text-4xl font-bold mb-6">Deconstruct your code.</h1>
-        <input 
-          value={repoUrl} 
-          onChange={e => setRepoUrl(e.target.value)} 
-          className="px-5 py-4 bg-dev-bg-base border border-dev-border rounded"
-        />
-        <button onClick={handleAnalyze} className="px-8 py-4 bg-dev-orange text-white font-bold rounded ml-3">
-          Analyze
-        </button>
-      </div>
-    </div>
-  )
-}`,
-  'DashboardPage.jsx': `import { useState } from 'react'
-import { Group, Panel, Separator } from 'react-resizable-panels'
-import Header from '../components/Header'
-import FileMapPanel from '../components/FileMapPanel'
-import CodeEditorPanel from '../components/CodeEditorPanel'
-import ChatPanel from '../components/ChatPanel'
-
-export default function DashboardPage() {
-  const [selectedFile, setSelectedFile] = useState(null)
-  return (
-    <div className="min-h-screen bg-dev-bg-darkest flex flex-col">
-      <Header />
-      <div className="flex-1 flex overflow-hidden">
-        <Group direction="horizontal">
-          <Panel defaultSize={25}><FileMapPanel onSelectFile={setSelectedFile} /></Panel>
-          <Separator className="w-1 bg-dev-border" />
-          <Panel defaultSize={50}><CodeEditorPanel selectedFile={selectedFile} /></Panel>
-          <Separator className="w-1 bg-dev-border" />
-          <Panel defaultSize={25}><ChatPanel /></Panel>
-        </Group>
-      </div>
-    </div>
-  )
-}`
-}
+import useTypingEffect from '../hooks/TypingEffect'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { detectLanguage } from '../utils/LanguageMap'
+import ignoredExtensions from '../utils/IgnoredExtensions.json'
 
 export const handleWheel = (e) => {
   if (e.deltaY !== 0) {
@@ -106,12 +18,25 @@ export default function CodeEditorPanel({
   selectedFile, setSelectedFile, setFilesOpened,
   filesOpened, activeTab, setActiveTab,
   summary, repoURL }) {
+
   const [contents, setContents] = useState('');
+  const [language, setLanguage] = useState('text');
+
+  const purposeText = selectedFile
+    ? `This file contains ${selectedFile.name} with important logic for the application.`
+    : 'Select a file from the 3D File Map to see its purpose and details.';
+
+  const { displayedText: typedPurpose, isFinished: isPurposeFinished } = useTypingEffect(purposeText, 1, 100);
 
   // Let's use useEffect to get the file data from the backend using lazy fetch 
   useEffect(() => {
     let active = true;
     setContents('');
+    if (selectedFile && selectedFile.path) {
+      setLanguage(detectLanguage(selectedFile.path));
+    } else {
+      setLanguage('text');
+    }
     const fetchFileContent = async () => {
       if (!selectedFile || !selectedFile.path) return;
       try {
@@ -133,9 +58,13 @@ export default function CodeEditorPanel({
     };
   }, [selectedFile, repoURL])
 
-  const activeContent = selectedFile
-    ? contents || `// Code content for ${selectedFile.name}\n// ...`
-    : sampleCode;
+  function checkBinary(file) {
+    if (!file) return false;
+    const pathOrName = typeof file === 'string' ? file : (file.path || file.name || '');
+    if (!pathOrName.includes('.')) return false;
+    const ext = '.' + pathOrName.split('.').pop().toLowerCase().trim();
+    return Array.isArray(ignoredExtensions) && ignoredExtensions.includes(ext);
+  }
 
   return (
     <div className="h-full flex flex-col bg-dev-bg-base">
@@ -159,8 +88,8 @@ export default function CodeEditorPanel({
           </button>
 
           {filesOpened && filesOpened.map((file) => {
-            const isFileSelected = selectedFile?.path && file.path 
-              ? selectedFile.path === file.path 
+            const isFileSelected = selectedFile?.path && file.path
+              ? selectedFile.path === file.path
               : selectedFile?.name === file.name;
             return (
               <div
@@ -181,7 +110,7 @@ export default function CodeEditorPanel({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    const updatedFiles = filesOpened.filter(f => 
+                    const updatedFiles = filesOpened.filter(f =>
                       (f.path && file.path) ? f.path !== file.path : f.name !== file.name
                     );
                     setFilesOpened(updatedFiles);
@@ -208,44 +137,80 @@ export default function CodeEditorPanel({
         {activeTab === "code" && (
           <>
             {/* AI Purpose Card */}
-            <div className="p-4 mx-4 mt-4 bg-dev-orange/10 border border-dev-orange/30 rounded-lg">
+            {/*
+            <div className="p-4 mx-4 mt-4 bg-dev-bg-surface/40 border border-dev-border border-l-2 border-l-dev-orange backdrop-blur rounded-xl shadow-lg relative overflow-hidden animate-fadeIn" key={selectedFile?.path || 'initial'}>
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-dev-orange flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="font-mono text-sm font-semibold text-dev-text-primary">File Purpose:</p>
                   <p className="text-sm text-dev-text-secondary font-mono mt-1">
-                    {selectedFile
-                      ? `This file contains ${selectedFile.name} with important logic for the application.`
-                      : 'Select a file from the 3D File Map to see its purpose and details.'}
+                    {typedPurpose}
+                    {!isPurposeFinished && (
+                      <span className="inline-block w-[2px] h-[1.1em] bg-dev-orange align-middle animate-blink ml-0.5" />
+                    )}
                   </p>
                 </div>
               </div>
             </div>
+            */}
 
             {/* Code Block */}
-            <div className="flex-1 p-4 overflow-auto no-scrollbar"
-              onWheel={handleWheel}>
-              <pre className="bg-dev-bg-surface text-dev-text-primary p-4 rounded-lg border border-dev-border font-mono text-sm leading-relaxed overflow-auto whitespace-pre-wrap break-words">
-                <code>{activeContent}</code>
-              </pre>
+            <div className="flex-1 p-4 overflow-auto no-scrollbar min-w-0 flex flex-col">
+              <div className="animate-fadeIn flex-1 flex flex-col" key={selectedFile?.path || 'sample'}>
+                {checkBinary(selectedFile) ? (
+                  <div>
+                    <span className="text-red-700 font-mono">Can't open a binary file in editor.</span>
+                  </div>
+                ) : contents ? (
+                  <SyntaxHighlighter
+                    style={oneDark}
+                    language={language}
+                    showLineNumbers={true}
+                    wrapLines={false}
+                    wrapLongLines={false}
+                    customStyle={{
+                      margin: 0,
+                      padding: '1rem',
+                      background: '#121418', // dev-bg-surface
+                      fontSize: '0.875rem',
+                      lineHeight: '1.625',
+                      borderRadius: '0.5rem',
+                      border: '1px solid #22272E',
+                      fontFamily: 'inherit',
+                      flex: 1,
+                    }}
+                    codeTagProps={{
+                      style: {
+                        fontFamily: 'inherit',
+                      }
+                    }}
+                  >
+                    {contents}
+                  </SyntaxHighlighter>
+                ) : (
+                  <div className="font-mono text-dev-emerald">
+                    Working<span className="inline-block animate-dot1 mt-1">.</span>
+                    <span className="inline-block animate-dot2 mt-1">.</span>
+                    <span className="inline-block animate-dot3 mt-1">.</span>
+                  </div>
+                )}
+              </div>
             </div>
           </>
         )}
 
         {activeTab === "summary" && (
-          <div className="flex-1 p-4 overflow-auto dev-glass-card">
-            <div className="prose prose-invert max-w-none">
-              <div className="p-6 rounded-lg">
-                <h3 className="text-dev-text-primary text-lg font-mono font-bold mb-3">
-                  AI Code Summary
-                </h3>
-                <div className="text-dev-text-primary font-mono space-y-3 text-sm">
-                  {summary ? (
-                    <ReactMarkdown>{summary}</ReactMarkdown>
-                  ) : (
-                    <p className="italic opacity-60">No summary available yet.</p>
-                  )}
-                </div>
+          <div className="flex-1 p-4 overflow-auto">
+            <div className="bg-dev-bg-surface/40 border border-dev-border backdrop-blur rounded-xl p-6 shadow-2xl prose prose-invert max-w-none animate-fadeIn">
+              <h3 className="text-dev-text-primary text-lg font-mono font-bold mb-3">
+                AI Code Summary
+              </h3>
+              <div className="text-dev-text-primary font-mono space-y-3 text-sm">
+                {summary ? (
+                  <ReactMarkdown>{summary}</ReactMarkdown>
+                ) : (
+                  <p className="italic opacity-60">No summary available yet.</p>
+                )}
               </div>
             </div>
           </div>
