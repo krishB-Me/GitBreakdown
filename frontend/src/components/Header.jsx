@@ -4,7 +4,7 @@ export default function Header({ onNavigate }) {
   // TODO: Define navigation props or handlers if custom routing is implemented
 
   return (
-    <header className="bg-dev-bg-surface border-b border-dev-border sticky top-0 z-50">
+    <header className="bg-[#0a0b0d] border-b border-dev-border sticky top-0 z-50 animate-fadeIn">
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
@@ -37,7 +37,7 @@ export default function Header({ onNavigate }) {
 
           <Link
             to="/dashboard"
-            className="px-6 py-2 bg-dev-orange text-white font-medium rounded-full hover:bg-dev-orange-hover transition-colors"
+            className="px-6 py-2 bg-dev-orange font-extrabold text-white rounded-full hover:bg-dev-orange-hover transition-colors"
           >
             Launch App
           </Link>
