@@ -6,6 +6,7 @@ from services.ai_service import *
 from services.db_service import get_repo_data, save_file, get_file_data, save_repo, update_columns
 from services.github_fetcher import get_file_response, decoding
 from services.lazy_summary import lazy_summarizer
+from constants import IGNORED_EXTENSIONS
 
 # Retrieve environment variables
 DATABASE_URL = os.getenv("SUPABASE_URL")
@@ -54,6 +55,11 @@ def lazy_fetch():
     url = data.get('url')
 
     if not path or not url: return jsonify({"error": "Invalid path or URL"}), 400
+
+    # Check if the file is a binary or ignored type
+    _, ext = os.path.splitext(path)
+    if ext.lower() in IGNORED_EXTENSIONS:
+        return jsonify({"error": "Binary or ignored file types cannot be fetched."}), 400
     
     owner, repo = parse_url(url)
     if not all([owner, repo]):
@@ -86,6 +92,11 @@ def lazy_summary():
     url = data.get('url')
     print("we got here")
     if not all([path, url]): return jsonify({"error": "Path or URL is missing."}), 400
+
+    # Check if the file is a binary or ignored type
+    _, ext = os.path.splitext(path)
+    if ext.lower() in IGNORED_EXTENSIONS:
+        return jsonify({"error": "Binary or ignored file types cannot be summarized."}), 400
     owner, repo = parse_url(url)
     if not all([owner, repo]): return jsonify({"error": "URL is invalid"}), 400
 
